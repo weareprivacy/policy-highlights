@@ -1,0 +1,42 @@
+{
+  "source": "./src",
+  "destination": "./docs",
+  "includes": ["\\.js$"],
+  "excludes": ["\\.config\\.js$", "bundle\\.js", "config/*", "content/*"],
+  "plugins": [
+    {
+      "name": "esdoc-standard-plugin",
+      "option": {
+        "lint": {"enable": true},
+        "coverage": {"enable": true},
+        "accessor": {"access": ["public", "protected"], "autoPrivate": true},
+        "undocumentIdentifier": {"enable": true},
+        "unexportedIdentifier": {"enable": false},
+        "typeInference": {"enable": true},
+        "brand": {
+          "logo": "",
+          "title": "Policy Highlights",
+          "description": "Automatically highlight keywords on your privacy policy, cookie policy, disclosure policy, disclaimer policy, and terms of service so the user can quickly find and understand important sections.",
+          "repository": "https://github.com/weareprivacy",
+          "site": "https://weareprivacy.com",
+          "author": "Pawel Glowacki",
+          "image": "https://via.placeholder.com/300x200"
+        }
+      }
+    },
+    {
+      "name": "esdoc-ecmascript-proposal-plugin",
+      "option": {
+        "classProperties": true,
+        "objectRestSpread": true,
+        "doExpressions": true,
+        "functionBind": true,
+        "functionSent": true,
+        "asyncGenerators": true,
+        "decorators": true,
+        "exportExtensions": true,
+        "dynamicImport": true
+      }
+    }
+  ]
+}
