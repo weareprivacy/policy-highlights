@@ -1,0 +1,59 @@
+{
+  "name": "policy-highlights",
+  "version": "1.0.0",
+  "description": "Automatically highlight keywords on your privacy policy, cookie policy, disclosure policy, disclaimer policy, and terms of service so the user can ...",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "webpack-dashboard -- webpack-dev-server --mode development --open",
+    "dev": "webpack --mode development",
+    "build": "webpack --mode production --progress",
+    "docs": "./node_modules/.bin/esdoc"
+  },
+  "keywords": [
+    "privacy policy",
+    "cookie policy",
+    "disclosure policy",
+    "disclaimer policy",
+    "terms of service",
+    "highlighter",
+    "policies"
+  ],
+  "author": "WeArePrivacy",
+  "license": "MIT",
+  "browserslist": [
+    "last 2 versions"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "acorn": "^6.1.1",
+    "autoprefixer": "^9.1.5",
+    "babel-loader": "^8.0.2",
+    "clean-webpack-plugin": "^0.1.19",
+    "css-loader": "^1.0.0",
+    "esdoc": "^1.1.0",
+    "esdoc-ecmascript-proposal-plugin": "^1.0.0",
+    "esdoc-standard-plugin": "^1.0.0",
+    "file-loader": "^2.0.0",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.2.0",
+    "imagemin": "^6.0.0",
+    "img-loader": "^3.0.0",
+    "lodash": "^4.17.11",
+    "mini-css-extract-plugin": "^0.4.2",
+    "node-sass": "^4.9.3",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^7.1.0",
+    "url-loader": "^1.1.1",
+    "webpack": "^4.30.0",
+    "webpack-bundle-analyzer": "^3.0.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-dashboard": "^2.0.0",
+    "webpack-dev-server": "^3.1.8"
+  },
+  "resolutions": {
+    "webpack/acorn": "6.1.1"
+  }
+}
