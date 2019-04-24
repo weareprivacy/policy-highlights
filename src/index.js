@@ -1,13 +1,37 @@
 import style from "./sass/index.scss";
 
 class policyHighlights {
-	constructor({ config }) {
-		this.container = document;
-		this.style = 'background-color: yellow;';
-		this.wrapText('privacy');
+	constructor(config = {}) {
+	    console.log(config);
+	    this.config = {
+	        ...{
+                highlights: [],
+                container: document,
+                backgroundColor: '#ffff00',
+                textColor: '#000000',
+                actionBackgroundColor: '#accef7',
+                actionTextColor: '#000000',
+            },
+            ...window.POLICY_HIGHLIGHTS_CONFIG,
+            ...config,
+	    };
+
+        this.config.highlights.map((h) => {
+            h.keywords.map((k) => {
+		        this.highlight({
+                    text: k,
+                    backgroundColor: h.backgroundColor,
+                    textColor: h.textColor,
+                });
+            });
+        });
 	}
 
-    wrapText(text) {
+    highlight({ text = '', backgroundColor = this.config.backgroundColor, textColor = this.config.textColor }) {
+	    if (text.length === 0) {
+	        return;
+        }
+        
         // Construct a regular expression that matches text at the start or end of a string or surrounded by non-word characters.
         // Escape any special regex characters in text.
         let textRE = new RegExp('(^|\\W)' + text.replace(/[\\^$*+.?[\]{}()|]/, '\\$&') + '($|\\W)', 'im');
@@ -15,10 +39,10 @@ class policyHighlights {
         let nodeStack = [];
 
         // Remove empty text nodes and combine adjacent text nodes.
-        this.container.normalize();
+        this.config.container.normalize();
 
         // Iterate through the container's child elements, looking for text nodes.
-        let curNode = this.container.firstChild;
+        let curNode = this.config.container.firstChild;
 
         while (curNode != null) {
             if (curNode.nodeType == Node.TEXT_NODE) {
@@ -39,10 +63,19 @@ class policyHighlights {
                     if (match.index > 0) {
                         fragment.appendChild(document.createTextNode(match.input.substr(0, match.index)));
                     }
+                    
+                    // Setup style for span
+                    const style = [];
+                    if (backgroundColor && backgroundColor.length > 0) {
+                        style.push(...['background-color: ', backgroundColor, ';']);
+                    }
+                    if (textColor && textColor.length > 0) {
+                        style.push(...['color: ', textColor, ';']);
+                    }
 
                     // Create the wrapper span and add the matched text to it.
                     let spanNode = document.createElement('span');
-                    spanNode.setAttribute('style', this.style);
+                    spanNode.setAttribute('style', style.join(''));
                     spanNode.appendChild(document.createTextNode(match[0]));
                     fragment.appendChild(spanNode);
 
