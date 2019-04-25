@@ -1,43 +1,55 @@
-# Policy Highlights
+<p align="center">
+  <img width="300px" src="./static/readme.png">
+</p>
 
-## Build
+<h1 align="center">Policy Highlights</h1>
+
+<p align="center">Automatically highlight keywords on your privacy policy, cookie policy, disclosure policy, disclaimer policy, and terms of service so the user can quickly find and understand important sections.</p>
+
+<p align="center">
+  <a aria-label="npm package" href="https://www.npmjs.com/package/@primer/css">
+    <img alt="" src="https://img.shields.io/npm/v/@primer/css.svg">
+  </a>
+  <a aria-label="contributors graph" href="https://github.com/primer/css/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/primer/css.svg">
+  </a>
+  <a aria-label="last commit" href="https://github.com/primer/css/commits/master">
+    <img alt="" src="https://img.shields.io/github/last-commit/primer/css.svg">
+  </a>
+  <a aria-label="join us in spectrum" href="https://spectrum.chat/primer">
+    <img alt="" src="https://withspectrum.github.io/badge/badge.svg">
+  </a>
+  <a aria-label="license" href="https://github.com/primer/css/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/primer/css.svg" alt="">
+  </a>
+</p>
+
+## Usage
+
+### General Usage
+
+Include the script in your website privacy policy right before the `</body>` tag.
 
 ```
-# install dependencies
-npm install
+<script type="text/javascript" src="https://weareprivacy.com/TODO"></script>
+```
 
-# serve with hot reload at localhost:8080/dist/
-npm run start
+### CDN Usage
 
-# build for production with minification
-npm run build
+Policy highlights can be served from a CDN such as [JSDelivr](https://www.jsdelivr.com/package/npm/simple-icons) or [Unpkg](https://unpkg.com). Simply use the `simple-icons` npm package and specify a version in the URL like the following:
 
-# build for development without minification
-npm run dev
+```html
+<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/[ICON NAME].svg" />
+<img height="32" width="32" src="https://unpkg.com/simple-icons@latest/icons/[ICON NAME].svg" />
 ```
 
 ## Example
 
 See `dist/index.html`
 
-## Global namespace
+## Development
+See [DEVELOP.md](./DEVELOP.md) for development docs.
 
-You can access `policyHighlights` using the global `window.weareprivacy` namespace.
+## License
 
-`window.weareprivacy.policyHighlights`
-
-## Optional configuration
-
-```
-window.POLICY_HIGHLIGHTS_CONFIG = {
-    highlights: [
-        {
-            name: 'Contact us',
-            description: 'How to contact us',
-            keywords: ['e-mail', 'email', '@', 'contact', 'address', 'letter'],
-            backgroundColor: 'yellow',
-            textColor: 'black'
-        }
-    ]
-}
-```
+[MIT](./LICENSE) &copy; [GitHub](https://github.com/)
