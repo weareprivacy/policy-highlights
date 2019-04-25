@@ -2,11 +2,11 @@
 
 ## Build
 
-``` bash
+```
 # install dependencies
 npm install
 
-# serve with hot reload at localhost:8080
+# serve with hot reload at localhost:8080/dist/
 npm run start
 
 # build for production with minification
@@ -26,6 +26,18 @@ You can access `policyHighlights` using the global `window.weareprivacy` namespa
 
 `window.weareprivacy.policyHighlights`
 
-## Configuration
+## Optional configuration
 
-TODO
+```
+window.POLICY_HIGHLIGHTS_CONFIG = {
+    highlights: [
+        {
+            name: 'Contact us',
+            description: 'How to contact us',
+            keywords: ['e-mail', 'email', '@', 'contact', 'address', 'letter'],
+            backgroundColor: 'yellow',
+            textColor: 'black'
+        }
+    ]
+}
+```

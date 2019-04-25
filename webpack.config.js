@@ -9,8 +9,7 @@ const devMode = process.env.WEBPACK_MODE === 'production';
 
 module.exports = {
   entry: {
-    bundle: './src/bundle.js',
-    config: './src/config.json'
+    bundle: './src/bundle.js'
   },
   output: {
     filename: '[name].js',
@@ -66,9 +65,9 @@ module.exports = {
   },
   plugins: [
     new webpackDashboard(),
-    // new BundleAnalyzerPlugin({
-	   //  analyzerMode: devMode ? 'server' : 'static',
-    // }),
+    new BundleAnalyzerPlugin({
+	    analyzerMode: devMode ? 'server' : 'static',
+    }),
     new CleanWebpackPlugin(['dist', 'docs']),
     new HtmlWebPackPlugin({
       template: "./src/index.html",

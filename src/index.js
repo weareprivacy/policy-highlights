@@ -1,18 +1,16 @@
-import style from "./sass/index.scss";
+//import style from "./sass/index.scss";
 
 class policyHighlights {
 	constructor(config = {}) {
-	    console.log(config);
 	    this.config = {
 	        ...{
                 highlights: [],
                 container: document,
                 backgroundColor: '#ffff00',
                 textColor: '#000000',
-                actionBackgroundColor: '#accef7',
-                actionTextColor: '#000000',
+                actionBackgroundColor: '#eff7ff',
+                actionTextColor: '#0366d6',
             },
-            ...window.POLICY_HIGHLIGHTS_CONFIG,
             ...config,
 	    };
 
