@@ -33,13 +33,13 @@ Configuration is optional and can be included to override the default configurat
 | backgroundColor | "#ffff00" | String | "red" | Default keyword background color |
 | textColor | "#000000" | String | "yellow" | Default keyword text color |
 
-### Highlights
+### Highlight
 
 | key | default value | type | example | description |
 | --- | --- | :---: | --- | --- |
 | name | "" | String | "Contact info" | Name of highlight group |
 | description | "" | String | "How to contact the website" | Description of highlight group |
-| keywords | [] | Array | ["e-mail", "@"] | Array of keywords (Strings to highlight) |
+| keywords | "" | String | "e-mail,@" | String of comma-delimited keywords to highlight |
 | backgroundColor | "#ffff00" | String | "blue" | Keyword background color |
 | textColor | "#000000" | String | "white" | Keyword text color |
 
@@ -51,7 +51,7 @@ window.POLICY_HIGHLIGHTS_CONFIG = {
         {
             name: 'Contact us',
             description: 'How to contact us',
-            keywords: ['e-mail', 'email', '@', 'contact', 'address', 'letter'],
+            keywords: 'e-mail,email,@,contact,address,letter',
             backgroundColor: 'yellow',
             textColor: 'black'
         }

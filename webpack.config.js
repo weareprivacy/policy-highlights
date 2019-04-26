@@ -65,9 +65,9 @@ module.exports = {
   },
   plugins: [
     new webpackDashboard(),
-    new BundleAnalyzerPlugin({
-	    analyzerMode: devMode ? 'server' : 'static',
-    }),
+    // new BundleAnalyzerPlugin({
+	   //  analyzerMode: devMode ? 'server' : 'static',
+    // }),
     new CleanWebpackPlugin(['dist', 'docs']),
     new HtmlWebPackPlugin({
       template: "./src/index.html",

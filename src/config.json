@@ -1,7 +1,29 @@
 {
-  "highlights": [
-    {
-      "keywords": ["keywords"]
-    }
-  ]
+	"highlights": [
+		{
+			"name": "Collecting and storing your data",
+			"description": "Details on how a website collects and stores your personal data.",
+			"keywords": "email,e-mail,name,phone"
+		},
+		{
+			"name": "Access to your data",
+			"description": "Details on how other services use your personal data.",
+			"keywords": "google,facebook,twitter,linkedin,bing,yahoo,analytics,3rd party,third party,newsletter"
+		},
+		{
+			"name": "Removing your data",
+			"description": "Details on what a website does with your data when you close your account.",
+			"keywords": "close,remove,delete,quarantine"
+		},
+		{
+			"name": "Last update date",
+			"description": "Details on when the website last updated this policy.",
+			"keywords": "last update,modified,created,2019,2018,2017"
+		},
+		{
+			"name": "Contact information",
+			"description": "Details on how you can contact the website if you have any questions or concerns.",
+			"keywords": "email,e-mail,@,contact,address"
+		}
+	]
 }

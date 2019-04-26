@@ -15,7 +15,7 @@ class policyHighlights {
 	    };
 
         this.config.highlights.map((h) => {
-            h.keywords.map((k) => {
+            h.keywords.split(',').map((k) => {
 		        this.highlight({
                     text: k,
                     backgroundColor: h.backgroundColor,
