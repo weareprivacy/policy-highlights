@@ -1,4 +1,4 @@
-//import style from "./sass/index.scss";
+import style from "./index.scss";
 
 class policyHighlights {
 	constructor(config = {}) {
@@ -6,26 +6,47 @@ class policyHighlights {
 	        ...{
                 highlights: [],
                 container: document,
-                backgroundColor: '#ffff00',
-                textColor: '#000000',
+                keywordBackgroundColor: '#ffff00',
+                keywordTextColor: '#000000',
                 actionBackgroundColor: '#eff7ff',
                 actionTextColor: '#0366d6',
             },
             ...config,
 	    };
+	    
+	    this.highlightMap = {};
+	    this.keywordDetails = null;
+	    
+	    this.parseHighlights();
+	}
+	
+	parseHighlights() {
+	    const parse = (highlight, index) => {
+            if (!(highlight.text in this.highlightMap)) {
+                this.highlightMap[highlight.text] = [index];
 
-        this.config.highlights.map((h) => {
-            h.keywords.split(',').map((k) => {
-		        this.highlight({
-                    text: k,
-                    backgroundColor: h.backgroundColor,
-                    textColor: h.textColor,
-                });
+                this.highlight(highlight);
+            } else if (this.highlightMap[highlight.text].indexOf(index) === -1) {
+                this.highlightMap[highlight.text].push(index);
+            }
+        };
+	    
+        this.config.highlights.forEach((h, hIndex) => {
+            (h.keywords || '').split(',').forEach((text) => {
+                parse({ text }, hIndex);
+            });
+            
+            (h.actions || '').split(',').forEach((text) => {
+                parse({
+                    text,
+                    backgroundColor: this.config.actionBackgroundColor,
+                    textColor: this.config.actionTextColor
+                }, hIndex);
             });
         });
-	}
+    }
 
-    highlight({ text = '', backgroundColor = this.config.backgroundColor, textColor = this.config.textColor }) {
+    highlight({ text = '', backgroundColor = this.config.keywordBackgroundColor, textColor = this.config.keywordTextColor }) {
 	    if (text.length === 0) {
 	        return;
         }
@@ -63,19 +84,21 @@ class policyHighlights {
                     }
                     
                     // Setup style for span
-                    const style = [];
-                    if (backgroundColor && backgroundColor.length > 0) {
-                        style.push(...['background-color: ', backgroundColor, ';']);
-                    }
-                    if (textColor && textColor.length > 0) {
-                        style.push(...['color: ', textColor, ';']);
-                    }
+                    const style = this.highlightStyle({
+                        style: ['position:relative;'],
+                        backgroundColor,
+                        textColor
+                    });
 
                     // Create the wrapper span and add the matched text to it.
                     let spanNode = document.createElement('span');
-                    spanNode.setAttribute('style', style.join(''));
+                    spanNode.setAttribute('style', style);
                     spanNode.appendChild(document.createTextNode(match[0]));
                     fragment.appendChild(spanNode);
+
+                    // Events
+                    spanNode.addEventListener('mouseover', this.showDetails.bind(this));
+                    spanNode.addEventListener('mouseout', this.hideDetails.bind(this));
 
                     // Create a new text node for any following text.
                     if (match.index + match[0].length < match.input.length) {
@@ -105,6 +128,82 @@ class policyHighlights {
                 curNode = curNode.nextSibling;
             }
         }
+    }
+    
+    highlightStyle({ style = [], backgroundColor = this.config.keywordBackgroundColor, textColor = this.config.keywordTextColor }) {
+        if (backgroundColor && backgroundColor.length > 0) {
+            style.push('background-color: ' + backgroundColor + ';');
+        }
+        if (textColor && textColor.length > 0) {
+            style.push('color: ' + textColor + ';');
+        }
+        
+        return style.join('');
+    }
+
+    showDetails(e) {
+        const text = e.target.innerHTML.replace(/[\\^$*+.?[\]{}()|]/, '').trim().toLowerCase();
+        if (text in this.highlightMap) {
+            this.hideDetails();
+
+            let popupNode = document.createElement('div');
+            popupNode.setAttribute('style', 'top: 100%;left:0;');
+            popupNode.setAttribute('class', 'policyHighlight__popup');
+            popupNode.innerHTML = this.getDetailsHTML(text);
+            e.target.appendChild(popupNode);
+
+            this.keywordDetails = popupNode;
+        }
+    }
+
+    hideDetails() {
+        if (this.keywordDetails) {
+            this.keywordDetails.parentNode.removeChild(this.keywordDetails);
+        }
+
+        this.keywordDetails = null;
+    }
+
+    getDetailsHTML(text) {
+        const highlights = this.highlightMap[text].map((highlightIndex) => {
+            return this.getHighlightHTML(text, this.config.highlights[highlightIndex]);
+        });
+        
+        const value = this.getHTMLTag({ value: text, className: "policyHighlight__text" })
+            + this.getHTMLTag({ value: highlights.join(''), className: "policyHighlight__highlights" });
+
+        return this.getHTMLTag({
+            value,
+            className: "policyHighlight__details"
+        });
+    }
+
+    getHighlightHTML(text, highlight) {
+        const highlightText = (list = '', style = '') => {
+            return list.split(',').map((value) => {
+                return this.getHTMLTag({ value, style, tag: 'span' });
+            }).join('');
+        };
+
+        const keywordStyle = this.highlightStyle({});
+        const actionStyle = this.highlightStyle({
+            backgroundColor: this.config.actionBackgroundColor,
+            textColor: this.config.actionTextColor
+        });
+
+        const keywords = highlightText(highlight.keywords, keywordStyle);
+        const actions = highlightText(highlight.actions, actionStyle);
+        
+        const value = this.getHTMLTag({ value: highlight.name, className: "policyHighlight__name" }) 
+            + this.getHTMLTag({ value: highlight.description, className: "policyHighlight__description" })
+            + this.getHTMLTag({ value: keywords, className: "policyHighlight__keywords" })
+            + this.getHTMLTag({ value: actions, className: "policyHighlight__actions" });
+        
+        return this.getHTMLTag({ value, className: "policyHighlight__highlight" });
+    }
+
+    getHTMLTag({ value = '', className = '', style = '', tag = 'div' }) {
+        return value && value.length > 0 && `<` + tag + ` class="` + className + `" style="` + style + `">` + value + `</` + tag + `>`;
     }
 }
 
