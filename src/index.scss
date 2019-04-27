@@ -1,10 +1,16 @@
 .policyHighlight {
     &__popup {
+        display: block;
+        outline: none;
         position: absolute;
         z-index: 1000;
+        margin: 15px 0 25px;
+        top: 100%;
+        left:-10px;
     }
     
     &__details {
+        position: relative;
         background-color: #fff;
         border: 1px solid #d1d5da;
         border-radius: 3px;
@@ -13,6 +19,48 @@
         max-height: 500px;
         text-align: left;
         font-family: sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        color: #000;
+
+        &:before,
+        &:after {
+            content: '';
+            display: inline-block;
+            left: 50%;
+            position: absolute;
+            margin-left: 0;
+        }
+
+        &:before {
+            border: 8px solid transparent;
+            border-bottom-color: rgba(27,31,35,.15);
+            top: -16px;
+            left: 34px;
+        }
+
+        &:after {
+            border: 7px solid transparent;
+            border-bottom-color: #fff;
+            top: -14px;
+            left: 35px;
+        }
+    }
+
+    &__text {
+        padding: 10px 10px 5px;
+        color: #6a737d;
+        font-size: 12px;
+        text-transform: capitalize;
+    }
+
+    &__type {
+        padding: 5px 10px 10px;
+        font-size: 12px;
+    }
+
+    &__highlights {
+        margin-bottom: 5px;
     }
     
     &__highlight {
@@ -24,36 +72,21 @@
         }
     }
     
-    &__text {
-        padding: 10px;
-        color: #6a737d;
-        font-size: 12px;
-        text-transform: capitalize;
-    }
-    
     &__name {
-        color: #000;
-        font-size: 14px;
         margin-bottom: 5px;
         font-weight: 700;
     }
     
     &__description {
         color: #586069;
-        font-size: 14px;
         margin-bottom: 10px;
+        word-break: break-word;
     }
-    
-    &__keywords,
-    &__actions {
-        margin-bottom: 5px;
-        font-size: 14px;
-        
-        > span {
-            padding: 2px 5px;
-            margin-right: 5px;
-            word-break: keep-all;
-            display: inline-block;
-        }
+
+    &__tag {
+        padding: 2px 5px;
+        margin-right: 5px;
+        word-break: keep-all;
+        display: inline-block;
     }
 }

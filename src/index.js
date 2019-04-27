@@ -33,12 +33,16 @@ class policyHighlights {
 	    
         this.config.highlights.forEach((h, hIndex) => {
             (h.keywords || '').split(',').forEach((text) => {
-                parse({ text }, hIndex);
+                parse({
+                    text,
+                    type: 'keyword'
+                }, hIndex);
             });
             
             (h.actions || '').split(',').forEach((text) => {
                 parse({
                     text,
+                    type: 'action',
                     backgroundColor: this.config.actionBackgroundColor,
                     textColor: this.config.actionTextColor
                 }, hIndex);
@@ -46,7 +50,7 @@ class policyHighlights {
         });
     }
 
-    highlight({ text = '', backgroundColor = this.config.keywordBackgroundColor, textColor = this.config.keywordTextColor }) {
+    highlight({ text = '', backgroundColor = this.config.keywordBackgroundColor, textColor = this.config.keywordTextColor, type }) {
 	    if (text.length === 0) {
 	        return;
         }
@@ -93,6 +97,9 @@ class policyHighlights {
                     // Create the wrapper span and add the matched text to it.
                     let spanNode = document.createElement('span');
                     spanNode.setAttribute('style', style);
+                    if (type) {
+                        spanNode.dataset.type = type;
+                    }
                     spanNode.appendChild(document.createTextNode(match[0]));
                     fragment.appendChild(spanNode);
 
@@ -147,9 +154,8 @@ class policyHighlights {
             this.hideDetails();
 
             let popupNode = document.createElement('div');
-            popupNode.setAttribute('style', 'top: 100%;left:0;');
             popupNode.setAttribute('class', 'policyHighlight__popup');
-            popupNode.innerHTML = this.getDetailsHTML(text);
+            popupNode.innerHTML = this.getDetailsHTML(text, e.target.dataset.type);
             e.target.appendChild(popupNode);
 
             this.keywordDetails = popupNode;
@@ -164,40 +170,66 @@ class policyHighlights {
         this.keywordDetails = null;
     }
 
-    getDetailsHTML(text) {
+    getDetailsHTML(text, type) {
+        let value = text;
+
+        if (type) {
+            let style = '';
+            if (type === 'keyword') {
+                style = this.highlightStyle({});
+            } else {
+                style = this.highlightStyle({
+                    backgroundColor: this.config.actionBackgroundColor,
+                    textColor: this.config.actionTextColor
+                });
+            }
+
+            value += ': ' + this.getHTMLTag({
+                value: type,
+                style,
+                tag: 'span',
+                className: "policyHighlight__tag"
+            });
+        }
+
+        let details = this.getHTMLTag({
+            value,
+            className: "policyHighlight__text"
+        });
+
+        if (type) {
+            let typeTag = ['An important', type, 'in the below'];
+
+            if (this.highlightMap[text].length > 1) {
+                typeTag.push(this.highlightMap[text].length + ' highlights.');
+            } else {
+                typeTag.push('highlight.');
+            }
+
+            details += this.getHTMLTag({
+                value: typeTag.join(' '),
+                className: "policyHighlight__type"
+            });
+        }
+
         const highlights = this.highlightMap[text].map((highlightIndex) => {
-            return this.getHighlightHTML(text, this.config.highlights[highlightIndex]);
+            return this.getHighlightHTML(this.config.highlights[highlightIndex]);
         });
         
-        const value = this.getHTMLTag({ value: text, className: "policyHighlight__text" })
-            + this.getHTMLTag({ value: highlights.join(''), className: "policyHighlight__highlights" });
+        details += this.getHTMLTag({
+            value: highlights.join(''),
+            className: "policyHighlight__highlights"
+        });
 
         return this.getHTMLTag({
-            value,
+            value: details,
             className: "policyHighlight__details"
         });
     }
 
-    getHighlightHTML(text, highlight) {
-        const highlightText = (list = '', style = '') => {
-            return list.split(',').map((value) => {
-                return this.getHTMLTag({ value, style, tag: 'span' });
-            }).join('');
-        };
-
-        const keywordStyle = this.highlightStyle({});
-        const actionStyle = this.highlightStyle({
-            backgroundColor: this.config.actionBackgroundColor,
-            textColor: this.config.actionTextColor
-        });
-
-        const keywords = highlightText(highlight.keywords, keywordStyle);
-        const actions = highlightText(highlight.actions, actionStyle);
-        
+    getHighlightHTML(highlight) {
         const value = this.getHTMLTag({ value: highlight.name, className: "policyHighlight__name" }) 
-            + this.getHTMLTag({ value: highlight.description, className: "policyHighlight__description" })
-            + this.getHTMLTag({ value: keywords, className: "policyHighlight__keywords" })
-            + this.getHTMLTag({ value: actions, className: "policyHighlight__actions" });
+            + this.getHTMLTag({ value: highlight.description, className: "policyHighlight__description" });
         
         return this.getHTMLTag({ value, className: "policyHighlight__highlight" });
     }
