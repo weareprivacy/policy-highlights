@@ -5,7 +5,7 @@
 Policy highlights is also available through our npm package. To install, simply run:
 
 ```
-$ npm install weareprivacy-policy-highlights
+$ npm install @weareprivacy/policy-highlights
 
 # install dependencies
 $ npm install
@@ -24,7 +24,7 @@ $ npm run dev
 
 Configuration is optional and can be included to override the default configuration settings.
 
-See [Config.json](./dist/config.json) for the default configuration.
+See [Config.json](https://github.com/weareprivacy/weareprivacy-policy-highlights/blob/master/src/config.json) for the default configuration.
 
 ### General
 

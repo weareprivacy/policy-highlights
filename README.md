@@ -25,9 +25,9 @@
 
 ### General Usage
 
-Include the script in your website privacy policy right before the `</body>` tag.
+Include the script in your website policy page right before the `</body>` tag.
 
-Policy highlights can be served from a CDN such as [JSDelivr](https://www.jsdelivr.com) or [Unpkg](https://unpkg.com). Simply use the `simple-icons` npm package and specify a version in the URL like the following:
+Policy highlights can be served from a CDN such as [JSDelivr](https://www.jsdelivr.com) or [Unpkg](https://unpkg.com). Simply use the `@weareprivacy/policy-highlights` npm package:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@weareprivacy/policy-highlights" type="text/javascript"></script>
