@@ -1,5 +1,5 @@
 {
-  "name": "policy-highlights",
+  "name": "@weareprivacy/policy-highlights",
   "version": "1.0.0",
   "description": "Automatically highlight keywords on your privacy policy, cookie policy, disclosure policy, disclaimer policy, and terms of service so the user can quickly find and understand important sections.",
   "main": "src/index.js",
@@ -18,7 +18,18 @@
     "highlighter",
     "policies"
   ],
-  "author": "WeArePrivacy",
+  "author": {
+    "name": "Pawel Glowacki",
+    "email": "team@weareprivacy.com",
+    "web": "https://weareprivacy.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/weareprivacy/weareprivacy-policy-highlights"
+  },
+  "bugs": {
+    "url": "https://github.com/weareprivacy/weareprivacy-policy-highlights/issues"
+  },
   "license": "MIT",
   "browserslist": [
     "last 2 versions"

@@ -39,7 +39,7 @@ Include the script in your website privacy policy right before the `</body>` tag
 Policy highlights can be served from a CDN such as [JSDelivr](https://www.jsdelivr.com/package/npm/simple-icons) or [Unpkg](https://unpkg.com). Simply use the `simple-icons` npm package and specify a version in the URL like the following:
 
 ```html
-<img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/[ICON NAME].svg" />
+<script src="https://cdn.jsdelivr.net/gh/weareprivacy/weareprivacy-policy-highlights@master/dist/bundle.js" type="text/javascript"></script>
 <img height="32" width="32" src="https://unpkg.com/simple-icons@latest/icons/[ICON NAME].svg" />
 ```
 
@@ -52,4 +52,4 @@ See [DEVELOP.md](./DEVELOP.md) for development docs.
 
 ## License
 
-[MIT](./LICENSE) &copy; [GitHub](https://github.com/)
+[MIT](./LICENSE.txt) &copy; [GitHub](https://github.com/)
