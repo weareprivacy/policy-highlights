@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="550px" height="400px" src="./static/readme.png">
+  <img width="550px" height="450px" src="./static/readme.png">
 </p>
 
 <h1 align="center">Policy Highlights</h1>
