@@ -2,7 +2,7 @@
   "name": "@weareprivacy/policy-highlights",
   "version": "1.0.0",
   "description": "Automatically highlight keywords on your privacy policy, cookie policy, disclosure policy, disclaimer policy, and terms of service so the user can quickly find and understand important sections.",
-  "main": "src/index.js",
+  "main": "dist/bundle.js",
   "scripts": {
     "start": "webpack-dashboard -- webpack-dev-server --mode development --open",
     "dev": "webpack --mode development",
