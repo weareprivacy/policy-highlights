@@ -1,14 +1,4 @@
-if (!('weareprivacy' in window)) {
-	window.weareprivacy = {};
-}
+const url = new URL(document.currentScript.src);
+__webpack_public_path__ = url.href.substring(0, url.href.lastIndexOf('/') + 1);
 
-if (!('policyHighlights' in window.weareprivacy)) {
-    import('./config.json').then((c) => {
-        import('./index').then((i) => {
-            window.weareprivacy.policyHighlights = new i.default({
-                ...c.default,
-                ...window['POLICY_HIGHLIGHTS_CONFIG']
-            });
-        });
-    });
-}
+require('./loader');

@@ -6,7 +6,6 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const devMode = process.env.WEBPACK_MODE === 'production';
-console.log(process.env.ASSET_PATH || '/dist/');
 
 module.exports = {
   entry: {

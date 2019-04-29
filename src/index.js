@@ -149,7 +149,7 @@ class policyHighlights {
     }
 
     showDetails(e) {
-        const text = e.target.innerHTML.replace(/[\\^$*+.?[\]{}()|]/, '').trim().toLowerCase();
+        const text = e.target.innerHTML.replace(/[\\^$*+.?[\]{}()<>|'";:]/g, '').replace(/[&,]/g, ' ').trim().toLowerCase();
         if (text in this.highlightMap) {
             this.hideDetails();
 
