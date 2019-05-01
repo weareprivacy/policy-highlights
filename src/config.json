@@ -3,7 +3,7 @@
 		{
 			"name": "Collecting and storing your data",
 			"description": "Details on how a website collects and stores your data.",
-			"keywords": "email,e-mail,name,phone,ip"
+			"keywords": "email,e-mail,name,phone,ip address,ip"
 		},
 		{
 			"name": "Third party access to your data",
@@ -19,7 +19,7 @@
 		{
 			"name": "Last update date",
 			"description": "Details on when the website last updated this policy.",
-			"keywords": "last update,last updated,modified,created,2019,2018,2017,2016,2015"
+			"keywords": "last updated,last update,modified,created,2019,2018,2017,2016,2015"
 		},
 		{
 			"name": "Contact information",
