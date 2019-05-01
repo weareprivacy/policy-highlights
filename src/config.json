@@ -2,13 +2,14 @@
 	"highlights": [
 		{
 			"name": "Collecting and storing your data",
-			"description": "Details on how a website collects and stores your personal data.",
+			"description": "Details on how a website collects and stores your data.",
 			"keywords": "email,e-mail,name,phone,ip"
 		},
 		{
-			"name": "Access to your data",
-			"description": "Details on how other services use your personal data.",
-			"keywords": "google,facebook,twitter,linkedin,bing,yahoo,instagram,analytics,3rd party,third party,newsletter"
+			"name": "Third party access to your data",
+			"description": "Details on how other services can potentially use your data.",
+			"keywords": "analytics,3rd party,third party,newsletter",
+			"actions": "google,facebook,twitter,linkedin,bing,yahoo,instagram"
 		},
 		{
 			"name": "Removing your data",
@@ -24,6 +25,22 @@
 			"name": "Contact information",
 			"description": "Details on how you can contact the website if you have any questions or concerns.",
 			"keywords": "email,e-mail,@,contact,address"
+		},
+		{
+			"name": "Website rights",
+			"description": "Details on what the company has power to do without your consent.",
+			"keywords": "discretion",
+			"actions": "notice,notification"
+		},
+		{
+			"name": "Sharing, tracking, and arbitration",
+			"description": "Details on your rights and what the website can do or what information you can limit.",
+			"keywords": "opt-out,opt out,consent,agree,allow,permit"
+		},
+		{
+			"name": "Selling or giving access to your data",
+			"description": "Details if the website is selling access to your information or selling a profile of your information.",
+			"keywords": "partner,disclose,share,sell"
 		}
 	]
 }
