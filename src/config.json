@@ -51,6 +51,12 @@
 			"name": "Payment processing",
 			"description": "Details on who uses your data and how when processing your payment.",
 			"keywords": "stripe,amazon,wepay,paypal,authorize.net,2checkout,dwolla,worldpay"
+		},
+		{
+			"name": "Disclaimers",
+			"description": "Details on when and how the website does not uphold its privacy promises.",
+			"keywords": "disclaimer,as-is,as is,exception,illegal,authorities,law enforcement,court,warrant,judge,required",
+			"actions": "patriot act"
 		}
 	]
 }
