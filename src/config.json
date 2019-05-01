@@ -9,7 +9,7 @@
 			"name": "Third party access to your data",
 			"description": "Details on how other services can potentially use your data.",
 			"keywords": "analytics,3rd party,third party,newsletter",
-			"actions": "google,facebook,twitter,linkedin,bing,yahoo,instagram"
+			"actions": "google,facebook,twitter,linkedin,bing,yahoo,instagram,github,cloudflare,fastly,amazon,zendesk,mailchimp"
 		},
 		{
 			"name": "Removing your data",
@@ -46,6 +46,11 @@
 			"name": "Requesting you to acknowledge something",
 			"description": "Details on what the website is asking you to approve, confirm, or even sign.",
 			"keywords": "sign here,signing,sign,endorse,confirm,acknowledge,approve,contract,stamp"
+		},
+		{
+			"name": "Payment processing",
+			"description": "Details on who uses your data and how when processing your payment.",
+			"keywords": "stripe,amazon,wepay,paypal,authorize.net,2checkout,dwolla,worldpay"
 		}
 	]
 }
