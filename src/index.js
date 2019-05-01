@@ -93,7 +93,7 @@ class policyHighlights {
                     
                     // Setup style for span
                     const style = this.highlightStyle({
-                        style: ['position:relative;'],
+                        style: ['display:inline-block;margin-left:3px;margin-right:3px;'],
                         backgroundColor,
                         textColor
                     });
@@ -158,10 +158,14 @@ class policyHighlights {
         if (text in this.highlightMap) {
             this.hideDetails();
 
+            const top = e.pageY - e.offsetY + e.target.clientHeight + 1;//1 = prevent popup hover toggle flicker
+            const left = e.pageX - e.offsetX + (e.target.clientWidth / 2) - 42;//42 = 34 popup offset + 8 :before width
+
             let popupNode = document.createElement('div');
             popupNode.setAttribute('class', 'policyHighlight__popup');
+            popupNode.setAttribute('style', 'top:' + top + 'px;left:' + left + 'px;');
             popupNode.innerHTML = this.getDetailsHTML(text, e.target.dataset.type);
-            e.target.appendChild(popupNode);
+            document.getElementsByTagName('body')[0].appendChild(popupNode);
 
             this.keywordDetails = popupNode;
         }
