@@ -18,8 +18,8 @@ class policyHighlights {
 	    this.highlightMap = {};
 	    this.keywordDetails = null;
 	    
-	    if (this.config.autoHighlight) {
-           this.parseHighlights();
+        if (this.config.autoHighlight) {
+            this.parseHighlights();
         }
 	}
 	
