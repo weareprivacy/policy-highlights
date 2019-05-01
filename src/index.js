@@ -60,6 +60,7 @@ class policyHighlights {
         let textRE = new RegExp('(^|\\W)' + text.replace(/[\\^$*+.?[\]{}()|]/, '\\$&') + '($|\\W)', 'im');
         let nodeText;
         let nodeStack = [];
+        const invalidNodeTypes = ['body', 'head', 'html', 'script', 'style', 'title', 'form'];
 
         // Remove empty text nodes and combine adjacent text nodes.
         this.config.container.normalize();
@@ -68,7 +69,7 @@ class policyHighlights {
         let curNode = this.config.container.firstChild;
 
         while (curNode != null) {
-            if (curNode.nodeType == Node.TEXT_NODE) {
+            if (curNode.nodeType == Node.TEXT_NODE && !curNode.parentNode.dataset.highlight && invalidNodeTypes.indexOf(curNode.parentNode.nodeName.toLowerCase()) === -1) {
                 // Get node text in a cross-browser compatible fashion.
                 if (typeof curNode.textContent === 'string') {
                     nodeText = curNode.textContent;
@@ -100,6 +101,7 @@ class policyHighlights {
                     if (type) {
                         spanNode.dataset.type = type;
                     }
+                    spanNode.dataset.highlight = true;
                     spanNode.appendChild(document.createTextNode(match[0]));
                     fragment.appendChild(spanNode);
 
