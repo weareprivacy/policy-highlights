@@ -4,12 +4,13 @@ class policyHighlights {
 	constructor(config = {}) {
 	    this.config = {
 	        ...{
+                autoHighlight: true,
                 highlights: [],
                 container: document,
                 keywordBackgroundColor: '#ffff00',
                 keywordTextColor: '#000000',
-                actionBackgroundColor: '#eff7ff',
-                actionTextColor: '#0366d6',
+                actionBackgroundColor: '#fcf1cd',
+                actionTextColor: '#000000',
             },
             ...config,
 	    };
@@ -17,18 +18,20 @@ class policyHighlights {
 	    this.highlightMap = {};
 	    this.keywordDetails = null;
 	    
-	    this.parseHighlights();
+	    if (this.config.autoHighlight) {
+           this.parseHighlights();
+        }
 	}
 	
 	parseHighlights() {
 	    const parse = (highlight, index) => {
             if (!(highlight.text in this.highlightMap)) {
                 this.highlightMap[highlight.text] = [index];
-
-                this.highlight(highlight);
             } else if (this.highlightMap[highlight.text].indexOf(index) === -1) {
                 this.highlightMap[highlight.text].push(index);
             }
+
+            this.highlight(highlight);
         };
 	    
         this.config.highlights.forEach((h, hIndex) => {
