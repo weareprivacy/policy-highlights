@@ -2,13 +2,14 @@
 	"highlights": [
 		{
 			"name": "Collecting and storing your data",
-			"description": "Details on how a website collects and stores your personal data.",
-			"keywords": "email,e-mail,name,phone,ip"
+			"description": "Details on how a website collects and stores your data.",
+			"keywords": "email,e-mail,name,phone,ip address,ip"
 		},
 		{
-			"name": "Access to your data",
-			"description": "Details on how other services use your personal data.",
-			"keywords": "google,facebook,twitter,linkedin,bing,yahoo,instagram,analytics,3rd party,third party,newsletter"
+			"name": "Third party access to your data",
+			"description": "Details on how other services can potentially use your data.",
+			"keywords": "analytics,3rd party,third party,newsletter",
+			"actions": "google,facebook,twitter,linkedin,bing,yahoo,instagram,github,cloudflare,fastly,amazon,zendesk,mailchimp"
 		},
 		{
 			"name": "Removing your data",
@@ -18,12 +19,45 @@
 		{
 			"name": "Last update date",
 			"description": "Details on when the website last updated this policy.",
-			"keywords": "last update,last updated,modified,created,2019,2018,2017,2016,2015"
+			"keywords": "last updated,last update,modified,created,2019,2018,2017,2016,2015"
 		},
 		{
 			"name": "Contact information",
 			"description": "Details on how you can contact the website if you have any questions or concerns.",
 			"keywords": "email,e-mail,@,contact,address"
+		},
+		{
+			"name": "Website rights",
+			"description": "Details on what the company has power to do without your consent.",
+			"keywords": "discretion",
+			"actions": "notice,notification"
+		},
+		{
+			"name": "Sharing, tracking, and arbitration",
+			"description": "Details on your rights and what the website can do or what information you can limit.",
+			"keywords": "opt-out,opt out,consent,agree,allow,permit"
+		},
+		{
+			"name": "Selling or giving access to your data",
+			"description": "Details if the website is selling access to your information or selling a profile of your information.",
+			"keywords": "partner,disclose,share,sell,transfer"
+		},
+		{
+			"name": "Requesting you to acknowledge something",
+			"description": "Details on what the website is asking you to approve, confirm, or even sign.",
+			"keywords": "sign here,signing,sign,endorse,confirm,acknowledge,approve,contract,stamp"
+		},
+		{
+			"name": "Payment processing",
+			"description": "Details on who uses your data and how when processing your payment.",
+			"keywords": "payment processing,payment subscription,payment card,payment,pay,order,transfer,transaction,credit card,debit card,wire transfer,wire",
+			"actions": "stripe,amazon,wepay,paypal,authorize.net,2checkout,dwolla,worldpay"
+		},
+		{
+			"name": "Disclaimers",
+			"description": "Details on when and how the website does not uphold its privacy promises.",
+			"keywords": "disclaimer,as-is,as is,exception,illegal,authorities,law enforcement,court,warrant,judge,required",
+			"actions": "patriot act"
 		}
 	]
 }

@@ -4,12 +4,13 @@ class policyHighlights {
 	constructor(config = {}) {
 	    this.config = {
 	        ...{
+                autoHighlight: true,
                 highlights: [],
                 container: document,
                 keywordBackgroundColor: '#ffff00',
                 keywordTextColor: '#000000',
-                actionBackgroundColor: '#eff7ff',
-                actionTextColor: '#0366d6',
+                actionBackgroundColor: '#fcf1cd',
+                actionTextColor: '#000000',
             },
             ...config,
 	    };
@@ -17,18 +18,20 @@ class policyHighlights {
 	    this.highlightMap = {};
 	    this.keywordDetails = null;
 	    
-	    this.parseHighlights();
+        if (this.config.autoHighlight) {
+            this.parseHighlights();
+        }
 	}
 	
 	parseHighlights() {
 	    const parse = (highlight, index) => {
             if (!(highlight.text in this.highlightMap)) {
                 this.highlightMap[highlight.text] = [index];
-
-                this.highlight(highlight);
             } else if (this.highlightMap[highlight.text].indexOf(index) === -1) {
                 this.highlightMap[highlight.text].push(index);
             }
+
+            this.highlight(highlight);
         };
 	    
         this.config.highlights.forEach((h, hIndex) => {
@@ -60,6 +63,7 @@ class policyHighlights {
         let textRE = new RegExp('(^|\\W)' + text.replace(/[\\^$*+.?[\]{}()|]/, '\\$&') + '($|\\W)', 'im');
         let nodeText;
         let nodeStack = [];
+        const invalidNodeTypes = ['body', 'head', 'html', 'script', 'style', 'title', 'form'];
 
         // Remove empty text nodes and combine adjacent text nodes.
         this.config.container.normalize();
@@ -68,7 +72,7 @@ class policyHighlights {
         let curNode = this.config.container.firstChild;
 
         while (curNode != null) {
-            if (curNode.nodeType == Node.TEXT_NODE) {
+            if (curNode.nodeType == Node.TEXT_NODE && !curNode.parentNode.dataset.highlight && invalidNodeTypes.indexOf(curNode.parentNode.nodeName.toLowerCase()) === -1) {
                 // Get node text in a cross-browser compatible fashion.
                 if (typeof curNode.textContent === 'string') {
                     nodeText = curNode.textContent;
@@ -89,7 +93,7 @@ class policyHighlights {
                     
                     // Setup style for span
                     const style = this.highlightStyle({
-                        style: ['position:relative;'],
+                        style: ['display:inline-block;margin-left:3px;margin-right:3px;'],
                         backgroundColor,
                         textColor
                     });
@@ -100,6 +104,7 @@ class policyHighlights {
                     if (type) {
                         spanNode.dataset.type = type;
                     }
+                    spanNode.dataset.highlight = true;
                     spanNode.appendChild(document.createTextNode(match[0]));
                     fragment.appendChild(spanNode);
 
@@ -153,10 +158,14 @@ class policyHighlights {
         if (text in this.highlightMap) {
             this.hideDetails();
 
+            const top = e.pageY - e.offsetY + e.target.clientHeight + 1;//1 = prevent popup hover toggle flicker
+            const left = e.pageX - e.offsetX + (e.target.clientWidth / 2) - 42;//42 = 34 popup offset + 8 :before width
+
             let popupNode = document.createElement('div');
             popupNode.setAttribute('class', 'policyHighlight__popup');
+            popupNode.setAttribute('style', 'top:' + top + 'px;left:' + left + 'px;');
             popupNode.innerHTML = this.getDetailsHTML(text, e.target.dataset.type);
-            e.target.appendChild(popupNode);
+            document.getElementsByTagName('body')[0].appendChild(popupNode);
 
             this.keywordDetails = popupNode;
         }

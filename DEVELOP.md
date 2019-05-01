@@ -34,8 +34,9 @@ See [Config.json](https://github.com/weareprivacy/weareprivacy-policy-highlights
 | highlights | [] | Array | [{ highlight object }] | Array of Highlight objects |
 | keywordBackgroundColor | "#ffff00" | String | "yellow" | Default keyword background color |
 | keywordTextColor | "#000000" | String | "red" | Default keyword text color |
-| actionBackgroundColor | "#eff7ff" | String | "blue" | Default action background color |
-| actionTextColor | "#0366d6" | String | "white" | Default action text color |
+| actionBackgroundColor | "#fcf1cd" | String | "blue" | Default action background color |
+| actionTextColor | "#000000" | String | "white" | Default action text color |
+| autoHighlight | true | Boolean | false | Automatically highlight keywords and actions on script initialization |
 
 ### Highlight
 
