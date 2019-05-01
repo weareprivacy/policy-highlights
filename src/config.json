@@ -50,7 +50,8 @@
 		{
 			"name": "Payment processing",
 			"description": "Details on who uses your data and how when processing your payment.",
-			"keywords": "stripe,amazon,wepay,paypal,authorize.net,2checkout,dwolla,worldpay"
+			"keywords": "payment processing,payment subscription,payment card,payment,pay,order,transfer,transaction,credit card,debit card,wire transfer,wire",
+			"actions": "stripe,amazon,wepay,paypal,authorize.net,2checkout,dwolla,worldpay"
 		},
 		{
 			"name": "Disclaimers",
