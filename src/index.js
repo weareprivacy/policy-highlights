@@ -25,10 +25,11 @@ class policyHighlights {
 	
 	parseHighlights() {
 	    const parse = (highlight, index) => {
-            if (!(highlight.text in this.highlightMap)) {
-                this.highlightMap[highlight.text] = [index];
-            } else if (this.highlightMap[highlight.text].indexOf(index) === -1) {
-                this.highlightMap[highlight.text].push(index);
+            const text = highlight.text.replace(/[.']/g, '').replace(/[\-]/g, ' ');
+            if (!(text in this.highlightMap)) {
+                this.highlightMap[text] = [index];
+            } else if (this.highlightMap[text].indexOf(index) === -1) {
+                this.highlightMap[text].push(index);
             }
 
             this.highlight(highlight);
@@ -154,7 +155,7 @@ class policyHighlights {
     }
 
     showDetails(e) {
-        const text = e.target.innerHTML.replace(/[\\^$*+.?[\]{}()<>|'";:]/g, '').replace(/[&,]/g, ' ').trim().toLowerCase();
+        const text = e.target.innerHTML.replace(/[\\^$*+.?[\]{}()<>|’'"“”;:]/g, '').replace(/[\-&,]/g, ' ').trim().toLowerCase();
         if (text in this.highlightMap) {
             this.hideDetails();
 
