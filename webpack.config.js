@@ -15,6 +15,7 @@ module.exports = {
     filename: '[name].js',
     publicPath: "",
     chunkFilename: '[name].[contenthash].js',
+    jsonpFunction: 'policyHighlightsJsonpFunction'
   },
   devServer: {
     contentBase: '/',
