@@ -10,14 +10,14 @@
   <a aria-label="npm package" href="https://www.npmjs.com/package/@weareprivacy/policy-highlights">
     <img alt="" src="https://img.shields.io/npm/v/@weareprivacy/policy-highlights.svg">
   </a>
-  <a aria-label="contributors graph" href="https://github.com/weareprivacy/weareprivacy-policy-highlights/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/weareprivacy/weareprivacy-policy-highlights.svg">
+  <a aria-label="contributors graph" href="https://github.com/weareprivacy/policy-highlights/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/weareprivacy/policy-highlights.svg">
   </a>
-  <a aria-label="last commit" href="https://github.com/weareprivacy/weareprivacy-policy-highlights/commits/master">
-    <img alt="" src="https://img.shields.io/github/last-commit/weareprivacy/weareprivacy-policy-highlights.svg">
+  <a aria-label="last commit" href="https://github.com/weareprivacy/policy-highlights/commits/master">
+    <img alt="" src="https://img.shields.io/github/last-commit/weareprivacy/policy-highlights.svg">
   </a>
-  <a aria-label="license" href="https://github.com/weareprivacy/weareprivacy-policy-highlights/blob/master/LICENSE.txt">
-    <img src="https://img.shields.io/github/license/weareprivacy/weareprivacy-policy-highlights.svg" alt="">
+  <a aria-label="license" href="https://github.com/weareprivacy/policy-highlights/blob/master/LICENSE.txt">
+    <img src="https://img.shields.io/github/license/weareprivacy/policy-highlights.svg" alt="">
   </a>
 </p>
 
