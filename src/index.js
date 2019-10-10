@@ -14,15 +14,18 @@ class policyHighlights {
             },
             ...config,
 	    };
-	    
+
 	    this.highlightMap = {};
 	    this.keywordDetails = null;
-	    
+	    this.parsedHighlights = [];
+
         if (this.config.autoHighlight) {
+            const before = (new Date()).getTime();
             this.parseHighlights();
+            console.log((new Date()).getTime() - before);
         }
 	}
-	
+
 	parseHighlights() {
 	    const parse = (highlight, index) => {
             const text = highlight.text.replace(/[.']/g, '').replace(/[\-]/g, ' ');
@@ -32,36 +35,39 @@ class policyHighlights {
                 this.highlightMap[text].push(index);
             }
 
-            this.highlight(highlight);
+            //highlight.regex = new RegExp('(^|\\W)' + highlight.text.replace(/[\\^$*+.?[\]{}()|]/, '\\$&') + '($|\\W)', 'im');
+
+            this.parsedHighlights.push(highlight);
         };
-	    
+
         this.config.highlights.forEach((h, hIndex) => {
             (h.keywords || '').split(',').forEach((text) => {
-                parse({
-                    text,
-                    type: 'keyword'
-                }, hIndex);
+                if (text.length > 0) {
+                    parse({
+                        text,
+                        type: 'keyword'
+                    }, hIndex);
+                }
             });
-            
+
             (h.actions || '').split(',').forEach((text) => {
-                parse({
-                    text,
-                    type: 'action',
-                    backgroundColor: this.config.actionBackgroundColor,
-                    textColor: this.config.actionTextColor
-                }, hIndex);
+                if (text.length > 0) {
+                    parse({
+                        text,
+                        type: 'action',
+                        backgroundColor: this.config.actionBackgroundColor,
+                        textColor: this.config.actionTextColor
+                    }, hIndex);
+                }
             });
         });
+
+        this.highlight();
+
+        console.log(this.parsedHighlights);
     }
 
-    highlight({ text = '', backgroundColor = this.config.keywordBackgroundColor, textColor = this.config.keywordTextColor, type }) {
-	    if (text.length === 0) {
-	        return;
-        }
-        
-        // Construct a regular expression that matches text at the start or end of a string or surrounded by non-word characters.
-        // Escape any special regex characters in text.
-        let textRE = new RegExp('(^|\\W)' + text.replace(/[\\^$*+.?[\]{}()|]/, '\\$&') + '($|\\W)', 'im');
+    highlight() {
         let nodeText;
         let nodeStack = [];
         const invalidNodeTypes = ['body', 'head', 'html', 'script', 'style', 'title', 'form'];
@@ -74,54 +80,61 @@ class policyHighlights {
 
         while (curNode != null) {
             if (curNode.nodeType == Node.TEXT_NODE && !curNode.parentNode.dataset.highlight && invalidNodeTypes.indexOf(curNode.parentNode.nodeName.toLowerCase()) === -1) {
-                // Get node text in a cross-browser compatible fashion.
-                if (typeof curNode.textContent === 'string') {
-                    nodeText = curNode.textContent;
-                } else {
-                    nodeText = curNode.innerText;
-                }
-
-                // Use a regular expression to check if this text node contains the target text.
-                let match = textRE.exec(nodeText);
-                if (match != null) {
-                    // Create a document fragment to hold the new nodes.
-                    let fragment = document.createDocumentFragment();
-
-                    // Create a new text node for any preceding text.
-                    if (match.index > 0) {
-                        fragment.appendChild(document.createTextNode(match.input.substr(0, match.index)));
-                    }
-                    
-                    // Setup style for span
-                    const style = this.highlightStyle({
-                        style: ['display:inline-block;margin-left:3px;margin-right:3px;'],
-                        backgroundColor,
-                        textColor
-                    });
-
-                    // Create the wrapper span and add the matched text to it.
-                    let spanNode = document.createElement('span');
-                    spanNode.setAttribute('style', style);
-                    if (type) {
-                        spanNode.dataset.type = type;
-                    }
-                    spanNode.dataset.highlight = true;
-                    spanNode.appendChild(document.createTextNode(match[0]));
-                    fragment.appendChild(spanNode);
-
-                    // Events
-                    spanNode.addEventListener('mouseover', this.showDetails.bind(this));
-                    spanNode.addEventListener('mouseout', this.hideDetails.bind(this));
-
-                    // Create a new text node for any following text.
-                    if (match.index + match[0].length < match.input.length) {
-                        fragment.appendChild(document.createTextNode(match.input.substr(match.index + match[0].length)));
+                for (let x = 0; x < this.parsedHighlights.length; x++) {
+                    // Get node text in a cross-browser compatible fashion.
+                    if (typeof curNode.textContent === 'string') {
+                        nodeText = curNode.textContent;
+                    } else {
+                        nodeText = curNode.innerText;
                     }
 
-                    // Replace the existing text node with the fragment.
-                    curNode.parentNode.replaceChild(fragment, curNode);
+                    // Use a regular expression to check if this text node contains the target text.
+                    const regex = new RegExp('(^|\\W)' + this.parsedHighlights[x].text.replace(/[\\^$*+.?[\]{}()|]/, '\\$&') + '($|\\W)', 'im');
+                    console.log(nodeText);
+                    let match = regex.exec(nodeText);
+                    if (match != null) {
+                        console.log(match);
+                        // Create a document fragment to hold the new nodes.
+                        let fragment = document.createDocumentFragment();
 
-                    curNode = spanNode;
+                        // Create a new text node for any preceding text.
+                        if (match.index > 0) {
+                            fragment.appendChild(document.createTextNode(match.input.substr(0, match.index)));
+                        }
+
+                        // Setup style for span
+                        const style = this.highlightStyle({
+                            style: ['display:inline-block;margin-left:3px;margin-right:3px;'],
+                            backgroundColor: this.parsedHighlights[x].backgroundColor,
+                            textColor: this.parsedHighlights[x].textColor,
+                        });
+
+                        // Create the wrapper span and add the matched text to it.
+                        let spanNode = document.createElement('span');
+                        spanNode.setAttribute('style', style);
+                        if (this.parsedHighlights[x].type) {
+                            spanNode.dataset.type = this.parsedHighlights[x].type;
+                        }
+                        spanNode.dataset.highlight = true;
+                        spanNode.appendChild(document.createTextNode(match[0]));
+                        fragment.appendChild(spanNode);
+
+                        // Events
+                        spanNode.addEventListener('mouseover', this.showDetails.bind(this));
+                        spanNode.addEventListener('mouseout', this.hideDetails.bind(this));
+
+                        // Create a new text node for any following text.
+                        if (match.index + match[0].length < match.input.length) {
+                            fragment.appendChild(document.createTextNode(match.input.substr(match.index + match[0].length)));
+                        }
+
+                        console.log(fragment);
+
+                        // Replace the existing text node with the fragment.
+                        curNode.parentNode.replaceChild(fragment, curNode);
+
+                        curNode = spanNode;
+                    }
                 }
             } else if (curNode.nodeType == Node.ELEMENT_NODE && curNode.firstChild != null) {
                 nodeStack.push(curNode);
@@ -142,7 +155,7 @@ class policyHighlights {
             }
         }
     }
-    
+
     highlightStyle({ style = [], backgroundColor = this.config.keywordBackgroundColor, textColor = this.config.keywordTextColor }) {
         if (backgroundColor && backgroundColor.length > 0) {
             style.push('background-color: ' + backgroundColor + ';');
@@ -150,7 +163,7 @@ class policyHighlights {
         if (textColor && textColor.length > 0) {
             style.push('color: ' + textColor + ';');
         }
-        
+
         return style.join('');
     }
 
@@ -225,7 +238,7 @@ class policyHighlights {
         const highlights = this.highlightMap[text].map((highlightIndex) => {
             return this.getHighlightHTML(this.config.highlights[highlightIndex]);
         });
-        
+
         details += this.getHTMLTag({
             value: highlights.join(''),
             className: "policyHighlight__highlights"
@@ -238,9 +251,9 @@ class policyHighlights {
     }
 
     getHighlightHTML(highlight) {
-        const value = this.getHTMLTag({ value: highlight.name, className: "policyHighlight__name" }) 
+        const value = this.getHTMLTag({ value: highlight.name, className: "policyHighlight__name" })
             + this.getHTMLTag({ value: highlight.description, className: "policyHighlight__description" });
-        
+
         return this.getHTMLTag({ value, className: "policyHighlight__highlight" });
     }
 
