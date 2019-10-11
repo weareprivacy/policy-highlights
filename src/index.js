@@ -7,10 +7,14 @@ class policyHighlights {
                 autoHighlight: true,
                 highlights: [],
                 container: document,
-                keywordBackgroundColor: '#ffff00',
-                keywordTextColor: '#000000',
-                actionBackgroundColor: '#fcf1cd',
-                actionTextColor: '#000000',
+                backgroundColor: {
+                    keyword: '#ffff00',
+                    action: '#fcf1cd',
+                },
+                textColor: {
+                    keyword: '#000000',
+                    action: '#000000',
+                },
             },
             ...config,
 	    };
@@ -35,7 +39,7 @@ class policyHighlights {
                 this.highlightMap[text].push(index);
             }
 
-            //highlight.regex = new RegExp('(^|\\W)' + highlight.text.replace(/[\\^$*+.?[\]{}()|]/, '\\$&') + '($|\\W)', 'im');
+            highlight.regex = new RegExp('(^|\\W)' + highlight.text.replace(/[\\^$*+.?[\]{}()|]/, '\\$&') + '($|\\W)', 'im');
 
             this.parsedHighlights.push(highlight);
         };
@@ -45,7 +49,7 @@ class policyHighlights {
                 if (text.length > 0) {
                     parse({
                         text,
-                        type: 'keyword'
+                        type: 'keyword',
                     }, hIndex);
                 }
             });
@@ -55,16 +59,12 @@ class policyHighlights {
                     parse({
                         text,
                         type: 'action',
-                        backgroundColor: this.config.actionBackgroundColor,
-                        textColor: this.config.actionTextColor
                     }, hIndex);
                 }
             });
         });
 
         this.highlight();
-
-        console.log(this.parsedHighlights);
     }
 
     highlight() {
@@ -80,60 +80,75 @@ class policyHighlights {
 
         while (curNode != null) {
             if (curNode.nodeType == Node.TEXT_NODE && !curNode.parentNode.dataset.highlight && invalidNodeTypes.indexOf(curNode.parentNode.nodeName.toLowerCase()) === -1) {
+                // Get node text in a cross-browser compatible fashion.
+                if (typeof curNode.textContent === 'string') {
+                    nodeText = curNode.textContent;
+                } else {
+                    nodeText = curNode.innerText;
+                }
+
+                const matchMap = {};
+
                 for (let x = 0; x < this.parsedHighlights.length; x++) {
-                    // Get node text in a cross-browser compatible fashion.
-                    if (typeof curNode.textContent === 'string') {
-                        nodeText = curNode.textContent;
-                    } else {
-                        nodeText = curNode.innerText;
-                    }
-
                     // Use a regular expression to check if this text node contains the target text.
-                    const regex = new RegExp('(^|\\W)' + this.parsedHighlights[x].text.replace(/[\\^$*+.?[\]{}()|]/, '\\$&') + '($|\\W)', 'im');
-                    console.log(nodeText);
-                    let match = regex.exec(nodeText);
+                    let match = this.parsedHighlights[x].regex.exec(nodeText);
                     if (match != null) {
-                        console.log(match);
-                        // Create a document fragment to hold the new nodes.
-                        let fragment = document.createDocumentFragment();
+                        matchMap[match.index] = {
+                            type: this.parsedHighlights[x].type,
+                            index: match.index,
+                            length: match[0].length,
+                            text: match[0],
+                        };
+                    }
+                }
 
+                const matchMapValues = Object.values(matchMap);
+
+                if (matchMapValues.length > 0) {
+                    // Create a document fragment to hold the new nodes.
+                    let fragment = document.createDocumentFragment();
+
+                    for (let x = 0; x < matchMapValues.length; x++) {
                         // Create a new text node for any preceding text.
-                        if (match.index > 0) {
-                            fragment.appendChild(document.createTextNode(match.input.substr(0, match.index)));
+                        if (matchMapValues[x].index > 0) {
+                            if (x === 0) {
+                                fragment.appendChild(document.createTextNode(nodeText.substr(0, matchMapValues[x].index)));
+                            } else if (matchMapValues[x - 1].index + 1 + matchMapValues[x - 1].length < matchMapValues[x].index) {
+                                fragment.appendChild(document.createTextNode(nodeText.substr(matchMapValues[x - 1].index + 1 + matchMapValues[x - 1].length, matchMapValues[x].index)));
+                            }
                         }
 
                         // Setup style for span
                         const style = this.highlightStyle({
-                            style: ['display:inline-block;margin-left:3px;margin-right:3px;'],
-                            backgroundColor: this.parsedHighlights[x].backgroundColor,
-                            textColor: this.parsedHighlights[x].textColor,
+                            type: matchMapValues[x].type,
+                            style: ['display:inline-block;margin-left:4px;margin-right:4px;'],
                         });
 
                         // Create the wrapper span and add the matched text to it.
                         let spanNode = document.createElement('span');
                         spanNode.setAttribute('style', style);
-                        if (this.parsedHighlights[x].type) {
-                            spanNode.dataset.type = this.parsedHighlights[x].type;
+                        if (matchMapValues[x].type) {
+                            spanNode.dataset.type = matchMapValues[x].type;
                         }
                         spanNode.dataset.highlight = true;
-                        spanNode.appendChild(document.createTextNode(match[0]));
+                        spanNode.appendChild(document.createTextNode(matchMapValues[x].text));
                         fragment.appendChild(spanNode);
 
                         // Events
                         spanNode.addEventListener('mouseover', this.showDetails.bind(this));
                         spanNode.addEventListener('mouseout', this.hideDetails.bind(this));
 
-                        // Create a new text node for any following text.
-                        if (match.index + match[0].length < match.input.length) {
-                            fragment.appendChild(document.createTextNode(match.input.substr(match.index + match[0].length)));
+                        if (x === matchMapValues.length - 1) {
+                            // Create a new text node for any following text.
+                            if (matchMapValues[x].index + matchMapValues[x].length < nodeText.length) {
+                                fragment.appendChild(document.createTextNode(nodeText.substr(matchMapValues[x].index + matchMapValues[x].length)));
+                            }
+
+                            // Replace the existing text node with the fragment.
+                            curNode.parentNode.replaceChild(fragment, curNode);
+
+                            curNode = spanNode;
                         }
-
-                        console.log(fragment);
-
-                        // Replace the existing text node with the fragment.
-                        curNode.parentNode.replaceChild(fragment, curNode);
-
-                        curNode = spanNode;
                     }
                 }
             } else if (curNode.nodeType == Node.ELEMENT_NODE && curNode.firstChild != null) {
@@ -156,12 +171,12 @@ class policyHighlights {
         }
     }
 
-    highlightStyle({ style = [], backgroundColor = this.config.keywordBackgroundColor, textColor = this.config.keywordTextColor }) {
-        if (backgroundColor && backgroundColor.length > 0) {
-            style.push('background-color: ' + backgroundColor + ';');
+    highlightStyle({ type = 'keyword', style = [] }) {
+        if (this.config.backgroundColor[type] && this.config.backgroundColor[type].length > 0) {
+            style.push('background-color: ' + this.config.backgroundColor[type] + ';');
         }
-        if (textColor && textColor.length > 0) {
-            style.push('color: ' + textColor + ';');
+        if (this.config.textColor[type] && this.config.textColor[type].length > 0) {
+            style.push('color: ' + this.config.textColor[type] + ';');
         }
 
         return style.join('');
@@ -197,15 +212,7 @@ class policyHighlights {
         let value = text;
 
         if (type) {
-            let style = '';
-            if (type === 'keyword') {
-                style = this.highlightStyle({});
-            } else {
-                style = this.highlightStyle({
-                    backgroundColor: this.config.actionBackgroundColor,
-                    textColor: this.config.actionTextColor
-                });
-            }
+            let style = this.highlightStyle({ type });
 
             value += ': ' + this.getHTMLTag({
                 value: type,
