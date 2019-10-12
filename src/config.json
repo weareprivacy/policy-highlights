@@ -28,7 +28,7 @@
 		},
 		{
 			"name": "Website rights",
-			"description": "Details on what the company has power to do without your consent.",
+			"description": "Details on what the company has power to do with or without your consent.",
 			"keywords": "discretion",
 			"actions": "notice,notification"
 		},
