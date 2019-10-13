@@ -19,9 +19,10 @@ class policyHighlights {
             ...config,
 	    };
 
-	    this.highlightMap = {};
+	    this.positionMap = {};
 	    this.keywordDetails = null;
 	    this.parsedHighlights = [];
+        this.styles = {};
         this.singularTypeMap = {
             'keywords': 'keyword',
             'actions': 'action',
@@ -36,34 +37,49 @@ class policyHighlights {
 	}
 
 	parseHighlights() {
-        this.config.highlights.forEach((h, index) => {
-            ['keywords', 'actions'].forEach((type) => {
-                if (h[type] && h[type].length > 0) {
-                    const style = this.highlightStyle({
+        const types = Object.keys(this.singularTypeMap);
+
+        for (let a = this.config.highlights.length - 1; a >= 0; a--) {
+            const highlight = this.config.highlights[a];
+
+            for (let b = types.length - 1; b >= 0; b--) {
+                const type = types[b];
+
+                if (highlight[type] && highlight[type].length > 0) {
+                    this.addStyleForType({
                         type: this.singularTypeMap[type],
-                        style: ['display:inline-block;margin-left:4px;margin-right:4px;'],
                     });
 
-                    h[type].split(',').forEach((text) => {
+                    const texts = highlight[type].split(',');
+
+                    for (let c = texts.length - 1; c >= 0; c--) {
+                        const text = texts[c];
+
                         if (text.length > 0) {
-                            this.addTextToHighlightMap({ text, index });
+                            this.addTextToPositionMap({
+                                text,
+                                index: a,
+                            });
 
                             this.parsedHighlights.push({
                                 text,
-                                style,
                                 type: this.singularTypeMap[type],
                                 regex: new RegExp('(^|\\W)' + text.replace(/[\\^$*+.?[\]{}()|]/, '\\$&') + '($|\\W)', 'gim'),
                             });
                         }
-                    });
+                    }
                 }
-            })
-        });
+            }
+        };
 
         this.highlight();
     }
 
     highlight() {
+        if (this.parsedHighlights.length === 0) {
+            return;
+        }
+
         let nodeText;
         let nodeStack = [];
 
@@ -84,7 +100,7 @@ class policyHighlights {
 
                 const matchMap = {};
 
-                for (let x = 0; x < this.parsedHighlights.length; x++) {
+                for (let x = this.parsedHighlights.length - 1; x >= 0; x--) {
                     // Use a regular expression to check if this text node contains the target text.
                     let match;
                     do {
@@ -92,7 +108,6 @@ class policyHighlights {
                         if (match != null) {
                             matchMap[match.index] = {
                                 type: this.parsedHighlights[x].type,
-                                style: this.parsedHighlights[x].style,
                                 index: match.index,
                                 length: match[0].length,
                                 text: match[0],
@@ -108,24 +123,24 @@ class policyHighlights {
                     // Create a document fragment to hold the new nodes.
                     const fragment = document.createDocumentFragment();
 
-                    for (let x = 0; x < matchMapValues.length; x++) {
+                    for (let len = matchMapValues.length, x = 0; x < len; x++) {
                         // Create a new text node for any preceding text.
                         if (matchMapValues[x].index > 0) {
                             if (x === 0) {
                                 fragment.appendChild(document.createTextNode(nodeText.substr(0, matchMapValues[x].index)));
-                            } else if (matchMapValues[x - 1].index + matchMapValues[x - 1].length < matchMapValues[x].index) {
+                            } else {
                                 const startIndex = matchMapValues[x - 1].index + matchMapValues[x - 1].length;
-                                fragment.appendChild(document.createTextNode(nodeText.substr(startIndex, matchMapValues[x].index - startIndex)));
+                                if (startIndex < matchMapValues[x].index) {    
+                                    fragment.appendChild(document.createTextNode(nodeText.substr(startIndex, matchMapValues[x].index - startIndex)));
+                                }
                             }
                         }
 
                         // Create the wrapper span and add the matched text to it.
                         const spanNode = document.createElement('span');
-                        spanNode.setAttribute('style', matchMapValues[x].style);
-                        if (matchMapValues[x].type) {
-                            spanNode.dataset.type = matchMapValues[x].type;
-                        }
-                        spanNode.dataset.highlight = true;
+                        spanNode.setAttribute('style', this.styles[matchMapValues[x].type]);
+                        spanNode.setAttribute('data-type', matchMapValues[x].type);
+                        spanNode.setAttribute('data-highlight', true);
                         spanNode.appendChild(document.createTextNode(matchMapValues[x].text));
 
                         // Events
@@ -134,7 +149,7 @@ class policyHighlights {
 
                         fragment.appendChild(spanNode);
 
-                        if (x === matchMapValues.length - 1) {
+                        if (x === len - 1) {
                             // Create a new text node for any following text.
                             if (matchMapValues[x].index + matchMapValues[x].length < nodeText.length) {
                                 fragment.appendChild(document.createTextNode(nodeText.substr(matchMapValues[x].index + matchMapValues[x].length)));
@@ -142,6 +157,8 @@ class policyHighlights {
 
                             // Replace the existing text node with the fragment.
                             curNode.parentNode.replaceChild(fragment, curNode);
+
+                            curNode = spanNode;
                         }
                     }
                 }
@@ -180,18 +197,27 @@ class policyHighlights {
         return style.join('');
     }
 
-    addTextToHighlightMap({ text, index }) {
+    addStyleForType({ type }) {
+        if (!(type in this.styles)) {
+            this.styles[type] = this.highlightStyle({
+                type,
+                style: ['display:inline-block;margin-left:4px;margin-right:4px;'],
+            });
+        }
+    }
+
+    addTextToPositionMap({ text, index }) {
         const cleanText = text.replace(/[.']/g, '').replace(/[\-]/g, ' ');
-        if (!(cleanText in this.highlightMap)) {
-            this.highlightMap[cleanText] = [index];
-        } else if (this.highlightMap[cleanText].indexOf(index) === -1) {
-            this.highlightMap[cleanText].push(index);
+        if (!(cleanText in this.positionMap)) {
+            this.positionMap[cleanText] = [index];
+        } else if (this.positionMap[cleanText].indexOf(index) === -1) {
+            this.positionMap[cleanText].push(index);
         }
     }
 
     showDetails(e) {
         const text = e.target.innerHTML.replace(/[\\^$*+.?[\]{}()<>|’'"“”;:\/©®]/g, '').replace(/&nbsp;/g, '').replace(/[\-&,]/g, ' ').trim().toLowerCase();
-        if (text in this.highlightMap) {
+        if (text in this.positionMap) {
             this.hideDetails();
 
             const top = e.pageY - e.offsetY + e.target.clientHeight + 1;//1 = prevent popup hover toggle flicker
@@ -225,54 +251,54 @@ class policyHighlights {
                 value: type,
                 style,
                 tag: 'span',
-                className: "policyHighlight__tag"
+                className: "tag"
             });
         }
 
         let details = this.getHTMLTag({
             value,
-            className: "policyHighlight__text"
+            className: "text"
         });
 
         if (type) {
             let typeTag = ['An important', type, 'in the below'];
 
-            if (this.highlightMap[text].length > 1) {
-                typeTag.push(this.highlightMap[text].length + ' highlights.');
+            if (this.positionMap[text].length > 1) {
+                typeTag.push(this.positionMap[text].length + ' highlights.');
             } else {
                 typeTag.push('highlight.');
             }
 
             details += this.getHTMLTag({
                 value: typeTag.join(' '),
-                className: "policyHighlight__type"
+                className: "type"
             });
         }
 
-        const highlights = this.highlightMap[text].map((highlightIndex) => {
+        const highlights = this.positionMap[text].map((highlightIndex) => {
             return this.getHighlightHTML(this.config.highlights[highlightIndex]);
         });
 
         details += this.getHTMLTag({
             value: highlights.join(''),
-            className: "policyHighlight__highlights"
+            className: "highlights"
         });
 
         return this.getHTMLTag({
             value: details,
-            className: "policyHighlight__details"
+            className: "details"
         });
     }
 
     getHighlightHTML(highlight) {
-        const value = this.getHTMLTag({ value: highlight.name, className: "policyHighlight__name" })
-            + this.getHTMLTag({ value: highlight.description, className: "policyHighlight__description" });
+        const value = this.getHTMLTag({ value: highlight.name, className: "name" })
+            + this.getHTMLTag({ value: highlight.description, className: "description" });
 
-        return this.getHTMLTag({ value, className: "policyHighlight__highlight" });
+        return this.getHTMLTag({ value, className: "highlight" });
     }
 
     getHTMLTag({ value = '', className = '', style = '', tag = 'div' }) {
-        return value && value.length > 0 && `<` + tag + ` class="` + className + `" style="` + style + `">` + value + `</` + tag + `>`;
+        return value && value.length > 0 && `<` + tag + ` class="policyHighlight__` + className + `" style="` + style + `">` + value + `</` + tag + `>`;
     }
 }
 
