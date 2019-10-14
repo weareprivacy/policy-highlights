@@ -2,7 +2,7 @@ import style from "./index.scss";
 
 class policyHighlights {
 	constructor(config = {}) {
-	    this.config = {
+        this.config = {
             autoHighlight: true,
             highlights: [],
             container: document,
@@ -17,11 +17,11 @@ class policyHighlights {
                 action: '#000000',
                 ...config.textColor,
             },
-	    };
+        };
 
-	    this.positionMap = {};
-	    this.keywordDetails = null;
-	    this.parsedHighlights = [];
+        this.positionMap = {};
+        this.keywordDetails = null;
+        this.parsedHighlights = [];
         this.typeStyles = {};
         this.singularTypeMap = {
             'keywords': 'keyword',
