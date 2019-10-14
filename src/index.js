@@ -3,26 +3,26 @@ import style from "./index.scss";
 class policyHighlights {
 	constructor(config = {}) {
 	    this.config = {
-	        ...{
-                autoHighlight: true,
-                highlights: [],
-                container: document,
-                backgroundColor: {
-                    keyword: '#ffff00',
-                    action: '#fcf1cd',
-                },
-                textColor: {
-                    keyword: '#000000',
-                    action: '#000000',
-                },
-            },
+            autoHighlight: true,
+            highlights: [],
+            container: document,
             ...config,
+            backgroundColor: {
+                keyword: '#ffff00',
+                action: '#fcf1cd',
+                ...config.backgroundColor,
+            },
+            textColor: {
+                keyword: '#000000',
+                action: '#000000',
+                ...config.textColor,
+            },
 	    };
 
 	    this.positionMap = {};
 	    this.keywordDetails = null;
 	    this.parsedHighlights = [];
-        this.styles = {};
+        this.typeStyles = {};
         this.singularTypeMap = {
             'keywords': 'keyword',
             'actions': 'action',
@@ -30,13 +30,12 @@ class policyHighlights {
         this.invalidNodeTypes = ['body', 'head', 'html', 'script', 'style', 'title', 'form'];
 
         if (this.config.autoHighlight) {
-            const before = (new Date()).getTime();
             this.parseHighlights();
-            console.log((new Date()).getTime() - before);
         }
 	}
 
 	parseHighlights() {
+        this.parsedHighlights = [];
         const types = Object.keys(this.singularTypeMap);
 
         for (let a = this.config.highlights.length - 1; a >= 0; a--) {
@@ -46,7 +45,7 @@ class policyHighlights {
                 const type = types[b];
 
                 if (highlight[type] && highlight[type].length > 0) {
-                    this.addStyleForType({
+                    this.addTypeStyle({
                         type: this.singularTypeMap[type],
                     });
 
@@ -138,7 +137,7 @@ class policyHighlights {
 
                         // Create the wrapper span and add the matched text to it.
                         const spanNode = document.createElement('span');
-                        spanNode.setAttribute('style', this.styles[matchMapValues[x].type]);
+                        spanNode.setAttribute('style', this.typeStyles[matchMapValues[x].type]);
                         spanNode.setAttribute('data-type', matchMapValues[x].type);
                         spanNode.setAttribute('data-highlight', true);
                         spanNode.appendChild(document.createTextNode(matchMapValues[x].text));
@@ -186,20 +185,20 @@ class policyHighlights {
         nodeStack = undefined;
     }
 
-    highlightStyle({ type = 'keyword', style = [] }) {
+    getHighlightStyle({ type = 'keyword', style = [] }) {
         if (this.config.backgroundColor[type] && this.config.backgroundColor[type].length > 0) {
-            style.push('background-color: ' + this.config.backgroundColor[type] + ';');
+            style.push(`background-color:${this.config.backgroundColor[type]};`);
         }
         if (this.config.textColor[type] && this.config.textColor[type].length > 0) {
-            style.push('color: ' + this.config.textColor[type] + ';');
+            style.push(`color:${this.config.textColor[type]};`);
         }
 
         return style.join('');
     }
 
-    addStyleForType({ type }) {
-        if (!(type in this.styles)) {
-            this.styles[type] = this.highlightStyle({
+    addTypeStyle({ type }) {
+        if (!(type in this.typeStyles)) {
+            this.typeStyles[type] = this.getHighlightStyle({
                 type,
                 style: ['display:inline-block;margin-left:4px;margin-right:4px;'],
             });
@@ -225,7 +224,7 @@ class policyHighlights {
 
             let popupNode = document.createElement('div');
             popupNode.setAttribute('class', 'policyHighlight__popup');
-            popupNode.setAttribute('style', 'top:' + top + 'px;left:' + left + 'px;');
+            popupNode.setAttribute('style', `top:${top}px;left:${left}px;`);
             popupNode.innerHTML = this.getDetailsHTML(text, e.target.dataset.type);
             document.getElementsByTagName('body')[0].appendChild(popupNode);
 
@@ -245,7 +244,7 @@ class policyHighlights {
         let value = text;
 
         if (type) {
-            let style = this.highlightStyle({ type });
+            let style = this.getHighlightStyle({ type });
 
             value += ': ' + this.getHTMLTag({
                 value: type,
@@ -264,7 +263,7 @@ class policyHighlights {
             let typeTag = ['An important', type, 'in the below'];
 
             if (this.positionMap[text].length > 1) {
-                typeTag.push(this.positionMap[text].length + ' highlights.');
+                typeTag.push(`${this.positionMap[text].length} highlights.`);
             } else {
                 typeTag.push('highlight.');
             }
@@ -298,7 +297,7 @@ class policyHighlights {
     }
 
     getHTMLTag({ value = '', className = '', style = '', tag = 'div' }) {
-        return value && value.length > 0 && `<` + tag + ` class="policyHighlight__` + className + `" style="` + style + `">` + value + `</` + tag + `>`;
+        return value && value.length > 0 && `<${tag} class="policyHighlight__${className}" style="${style}">${value}</${tag}>`;
     }
 }
 
