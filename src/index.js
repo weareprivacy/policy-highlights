@@ -55,13 +55,12 @@ class policyHighlights {
                         const text = texts[c];
 
                         if (text.length > 0) {
-                            this.addTextToPositionMap({
+                            this.addTextPosition({
                                 text,
                                 index: a,
                             });
 
                             this.highlights.push({
-                                text,
                                 type: this.singularTypesMap[type],
                                 regex: new RegExp('(^|\\W)' + text.replace(/[\\^$*+.?[\]{}()|]/, '') + '($|\\W)', 'gim'),
                             });
@@ -91,9 +90,9 @@ class policyHighlights {
                 // Get node text in a cross-browser compatible fashion.
                 const text = typeof curNode.textContent === 'string' ? curNode.textContent : curNode.innerText;
 
-                this.findHighlight({
+                this.findHighlights({
                     text,
-                    createdCallback: (fragment, spanNode) => {
+                    foundCallback: (fragment, spanNode) => {
                         // Replace the existing text node with the fragment.
                         curNode.parentNode.replaceChild(fragment, curNode);
                         curNode = spanNode;
@@ -122,7 +121,7 @@ class policyHighlights {
         curNode = undefined;
     }
 
-    findHighlight({ text = '', createdCallback = () => {} }) {
+    findHighlights({ text = '', foundCallback = () => {} }) {
         const highlightsMap = this.getHighlightsMap({ text });
         const highlightsMapValues = Object.values(highlightsMap);
 
@@ -153,7 +152,7 @@ class policyHighlights {
                         fragment.appendChild(document.createTextNode(text.substr(highlightsMapValues[x].index + highlightsMapValues[x].length)));
                     }
 
-                    createdCallback(fragment, spanNode);
+                    foundCallback(fragment, spanNode);
                 }
             }
         }
@@ -218,7 +217,7 @@ class policyHighlights {
         }
     }
 
-    addTextToPositionMap({ text, index }) {
+    addTextPosition({ text, index }) {
         const cleanText = text.replace(/[.']/g, '').replace(/[\-]/g, ' ');
         if (!(cleanText in this.positionMap)) {
             this.positionMap[cleanText] = [index];
