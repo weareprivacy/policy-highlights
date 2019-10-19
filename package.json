@@ -84,6 +84,9 @@
   "resolutions": {
     "webpack/acorn": "6.1.1",
     "tar": ">=4.4.2",
-    "fstream": ">=1.0.12"
+    "fstream": ">=1.0.12",
+    "lodash": ">=4.17.13",
+    "lodash.merge": ">=4.6.2",
+    "marked": ">=0.7.0"
   }
 }
