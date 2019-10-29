@@ -29,8 +29,10 @@ class policyHighlights {
         };
         this.invalidNodeTypes = ['body', 'head', 'html', 'script', 'style', 'title', 'form'];
 
+        this.parseHighlights();
+
         if (this.config.autoHighlight) {
-            this.parseHighlights();
+            this.highlight();
         }
     }
 
@@ -69,8 +71,6 @@ class policyHighlights {
                 }
             }
         }
-
-        this.highlight();
     }
 
     highlight() {
