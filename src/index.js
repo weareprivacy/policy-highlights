@@ -28,6 +28,7 @@ class policyHighlights {
             'actions': 'action',
         };
         this.invalidNodeTypes = ['body', 'head', 'html', 'script', 'style', 'title', 'form'];
+        this.isScentence = new RegExp('\\.(?![a-zA-Z@#$%^&*()-_=+`~<>\\/,;:\'"\\\\|\\[\\]{}])', 'gim');
 
         if (this.config.autoHighlight) {
             this.parseHighlights();
@@ -122,58 +123,76 @@ class policyHighlights {
     }
 
     findHighlights({ text = '', foundCallback = () => {} }) {
-        const highlightsMap = this.getHighlightsMap({ text });
-        const highlightsMapValues = Object.values(highlightsMap);
+        if (text.trim().length === 0) {
+            return;
+        }
 
-        if (highlightsMapValues.length > 0) {
-            // Create a document fragment to hold the new nodes.
-            const fragment = document.createDocumentFragment();
+        let match;
+        let prevMatchIndex = 0;
+        let hasHighlights = false;
+        let textNode;
 
-            for (let len = highlightsMapValues.length, x = 0; x < len; x++) {
-                // Create a new text node for any preceding text.
-                if (highlightsMapValues[x].index > 0) {
-                    if (x === 0) {
-                        fragment.appendChild(document.createTextNode(text.substr(0, highlightsMapValues[x].index)));
-                    } else {
-                        const startIndex = highlightsMapValues[x - 1].index + highlightsMapValues[x - 1].length;
-                        if (startIndex < highlightsMapValues[x].index) {
-                            fragment.appendChild(document.createTextNode(text.substr(startIndex, highlightsMapValues[x].index - startIndex)));
-                        }
-                    }
+        // Create a document fragment to hold the new nodes.
+        const fragment = document.createDocumentFragment();
+
+        do {
+            if ((match = this.isScentence.exec(text)) != null) {
+                const scentence = text.substr(prevMatchIndex, this.isScentence.lastIndex - prevMatchIndex);
+
+                const highlightsMap = this.getHighlightsMap({ text: scentence });
+
+                if (highlightsMap.total > 0) {
+                    // Create the wrapper span and add the matched text to it.
+                    textNode = this.getHighlightSpan({
+                        type: 'keyword',
+                        text: scentence,
+                    });
+                    fragment.appendChild(textNode);
+                    hasHighlights = true;
+                } else {
+                    textNode = document.createTextNode(scentence);
+                    fragment.appendChild(textNode);
                 }
 
-                // Create the wrapper span and add the matched text to it.
-                const spanNode = this.getHighlightSpan(highlightsMapValues[x]);
-                fragment.appendChild(spanNode);
-
-                if (x === len - 1) {
-                    // Create a new text node for any following text.
-                    if (highlightsMapValues[x].index + highlightsMapValues[x].length < text.length) {
-                        fragment.appendChild(document.createTextNode(text.substr(highlightsMapValues[x].index + highlightsMapValues[x].length)));
-                    }
-
-                    foundCallback(fragment, spanNode);
-                }
+                prevMatchIndex = this.isScentence.lastIndex;
+            } else {
+                textNode = document.createTextNode(text.substr(prevMatchIndex));
+                fragment.appendChild(textNode);
             }
+        } while (match != null);
+
+        if (hasHighlights) {
+            foundCallback(fragment, textNode);
         }
     }
 
     getHighlightsMap({ text = '' }) {
-        const matchMap = {};
+        const matchMap = {
+            map: {},
+            types: {},
+            total: 0,
+        };
 
         if (text.length > 0) {
             for (let x = this.highlights.length - 1; x >= 0; x--) {
+                if (!(this.highlights[x].type in matchMap.types)) {
+                    matchMap.types[this.highlights[x].type] = 0;
+                }
+
                 // Use a regular expression to check if this text node contains the target text.
                 let match;
                 do {
                     match = this.highlights[x].regex.exec(text);
                     if (match != null) {
-                        matchMap[match.index] = {
+                        matchMap.map[match.index] = {
                             type: this.highlights[x].type,
                             index: match.index,
                             length: match[0].length,
                             text: match[0],
                         };
+
+                        matchMap.types[this.highlights[x].type] += 1;
+                        matchMap.total += 1;
                     }
                 } while (match != null);
                 match = undefined;
@@ -212,7 +231,7 @@ class policyHighlights {
         if (!(type in this.typeStyles)) {
             this.typeStyles[type] = this.getHighlightStyle({
                 type,
-                style: ['display:inline-block;margin-left:4px;margin-right:4px;'],
+                //style: ['display:inline-block;margin-left:4px;margin-right:4px;'],
             });
         }
     }
