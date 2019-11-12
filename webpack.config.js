@@ -9,7 +9,8 @@ const devMode = process.env.WEBPACK_MODE === 'production';
 
 module.exports = {
   entry: {
-    bundle: './src/bundle.js'
+    bundle: './src/bundle.js',
+    index: './src/loader.js',
   },
   output: {
     filename: '[name].js',
