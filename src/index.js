@@ -5,10 +5,10 @@ class policyHighlights {
         this.config = {
             autoHighlight: true,
             highlights: [],
-            container: document,
+            container: document.body,
             ...config,
             backgroundColor: {
-                keyword: '#ffff00',
+                keyword: '#f7f7f7',
                 action: '#fcf1cd',
                 ...config.backgroundColor,
             },
@@ -85,21 +85,47 @@ class policyHighlights {
         // Iterate through the container's child elements, looking for text nodes.
         let curNode = this.config.container.firstChild;
         let nodeStack = [];
+        let scentenceNode = null;
 
         while (curNode != null) {
             if (curNode.nodeType == Node.TEXT_NODE && !curNode.parentNode.dataset.highlight && this.invalidNodeTypes.indexOf(curNode.parentNode.nodeName.toLowerCase()) === -1) {
                 // Get node text in a cross-browser compatible fashion.
                 const text = typeof curNode.textContent === 'string' ? curNode.textContent : curNode.innerText;
+                scentenceNode = text.indexOf('.') >= 0;
+                console.log(text);
+                //console.log([...nodeStack]);
+                //
+                // if (curNode == scentenceNode) {
+                //     console.log(text);
+                // }
+                //console.log([...nodeStack]);
 
-                this.findHighlights({
-                    text,
-                    foundCallback: (fragment, spanNode) => {
-                        // Replace the existing text node with the fragment.
-                        curNode.parentNode.replaceChild(fragment, curNode);
-                        curNode = spanNode;
-                    }
-                });
+                // do {
+                //     if ((match = this.isScentence.exec(text)) != null) {
+                //         matches.push(match);
+                //     }
+                // } while(match != null)
+
+                // this.findHighlights({
+                //     text,
+                //     foundCallback: (fragment, spanNode) => {
+                //         // Replace the existing text node with the fragment.
+                //         curNode.parentNode.replaceChild(fragment, curNode);
+                //         curNode = spanNode;
+                //     }
+                // });
             } else if (curNode.nodeType == Node.ELEMENT_NODE && curNode.firstChild != null) {
+                // if (curNode.firstChild && curNode.firstChild.nodeType == Node.TEXT_NODE) {
+                //     const text = typeof curNode.firstChild.textContent === 'string' ? curNode.firstChild.textContent : curNode.firstChild.innerText;
+                //
+                //     let match;
+                //     do {
+                //         if ((match = this.isScentence.exec(text)) != null) {
+                //             console.log(match);
+                //             // scentenceNode = curNode;
+                //         }
+                //     } while(match != null)
+                // }
                 nodeStack.push(curNode);
                 curNode = curNode.firstChild;
                 // Skip the normal node advancement code.
@@ -109,6 +135,47 @@ class policyHighlights {
             // If there's no more siblings at this level, pop back up the stack until we find one.
             while (curNode != null && curNode.nextSibling == null) {
                 curNode = nodeStack.pop();
+
+                if (scentenceNode) {
+                    console.log(curNode);
+                    let match;
+                    let textNode;
+                    let prevMatchIndex = 0;
+                    let hasHighlights = false;
+                    const text = typeof curNode.textContent === 'string' ? curNode.textContent : curNode.innerText;
+                    const fragment = document.createDocumentFragment();
+
+                    do {
+                        if ((match = this.isScentence.exec(text)) != null) {
+                            const scentence = text.substr(prevMatchIndex, match.index - prevMatchIndex);
+
+                            const highlightsMap = this.getHighlightsMap({text: scentence});
+
+                            if (highlightsMap.total > 0) {
+                                // Create the wrapper span and add the matched text to it.
+                                textNode = this.getHighlightSpan({
+                                    type: highlightsMap.types.keyword === 0 ? 'action' : 'keyword',
+                                    text: scentence,
+                                });
+                                fragment.appendChild(textNode);
+                                hasHighlights = true;
+                            } else {
+                                textNode = document.createTextNode(scentence);
+                                fragment.appendChild(textNode);
+                            }
+
+                            prevMatchIndex = match.index + 1;
+                        }
+                    } while (match != null);
+
+                    if (hasHighlights) {
+                        // Replace the existing text node with the fragment.
+                        curNode.parentNode.replaceChild(fragment, curNode);
+                        curNode = textNode;
+                    }
+                }
+
+                scentenceNode = false;
             }
 
             // If curNode is null, that means we've completed our scan of the DOM tree.
@@ -144,7 +211,7 @@ class policyHighlights {
                 if (highlightsMap.total > 0) {
                     // Create the wrapper span and add the matched text to it.
                     textNode = this.getHighlightSpan({
-                        type: 'keyword',
+                        type: highlightsMap.types.keyword === 0 ? 'action' : 'keyword',
                         text: scentence,
                     });
                     fragment.appendChild(textNode);
@@ -229,10 +296,7 @@ class policyHighlights {
 
     addTypeStyle({ type }) {
         if (!(type in this.typeStyles)) {
-            this.typeStyles[type] = this.getHighlightStyle({
-                type,
-                //style: ['display:inline-block;margin-left:4px;margin-right:4px;'],
-            });
+            this.typeStyles[type] = this.getHighlightStyle({ type });
         }
     }
 
